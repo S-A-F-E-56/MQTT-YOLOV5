@@ -1,7 +1,8 @@
 import random
 import subprocess
 from paho.mqtt import client as mqtt_client
-
+import os
+import glob
 
 broker = 'broker.emqx.io'
 port = 1883
@@ -26,10 +27,12 @@ def connect_mqtt() -> mqtt_client:
     return client
 
 def run_yolov5():
+    images_path = 'MQTT-YOLOV5\images'
+    newest_image = max(glob.glob(os.path.join(images_path, '*')), key=os.path.getctime)
     command = [
         'python', './detect.py',
         '--weights', 'yolov5s.pt',
-        '--source', '0'
+        '--source', newest_image
     ]
     subprocess.run(command)
 
